@@ -20,3 +20,5 @@
 - [x] Verify the new end-to-end local workflow and record a concise demonstration from recording start through the finished guide.
 - [x] Update the README, installation guidance, release notes, visible ClickTrail branding, and a GitHub social-preview asset.
 - [ ] User will upload `assets/clicktrail-social-preview.jpg` in GitHub Settings → General → Social preview.
+- [x] Replace the AI-generated social preview with a layout composed only from real ClickTrail test captures in the extension’s visual style.
+- [x] Export the real test guide as a PDF and provide it together with the complete test GIF to the user.
