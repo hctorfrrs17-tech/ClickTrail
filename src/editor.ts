@@ -1,5 +1,6 @@
 import JSZip from "jszip";
-import { createGuideHtml, makeFilename, makeGuide, normalizeRedaction } from "./shared/guide";
+import { createGuideHtml, createSafeExportGuide, makeFilename, makeGuide, normalizeRedaction } from "./shared/guide";
+import { safeHttpUrl } from "./shared/security";
 import { readState, writeState } from "./shared/storage";
 import type { Guide, GuideStep, Redaction } from "./shared/types";
 
@@ -60,7 +61,7 @@ function createCard(step: GuideStep, index: number) {
   fragment.querySelector<HTMLElement>(".step-index")!.textContent = String(index + 1).padStart(2, "0");
   title.value = step.title;
   note.value = step.note;
-  url.href = step.url;
+  url.href = safeHttpUrl(step.url) ?? "#";
   if (step.screenshot) image.src = step.screenshot;
   else {
     image.classList.add("hidden");
@@ -115,19 +116,22 @@ function render() {
 }
 
 async function exportHtml() {
-  download(new Blob([createGuideHtml(guide)], { type: "text/html" }), `${makeFilename(guide.title)}.html`);
+  const safeGuide = await createSafeExportGuide(guide);
+  download(new Blob([createGuideHtml(safeGuide)], { type: "text/html" }), `${makeFilename(safeGuide.title)}.html`);
 }
 
 async function exportZip() {
+  const safeGuide = await createSafeExportGuide(guide);
   const zip = new JSZip();
-  zip.file(`${makeFilename(guide.title)}.html`, createGuideHtml(guide));
-  zip.file("guide-data.json", JSON.stringify(guide, null, 2));
+  zip.file(`${makeFilename(safeGuide.title)}.html`, createGuideHtml(safeGuide));
+  zip.file("guide-data.json", JSON.stringify(safeGuide, null, 2));
   const blob = await zip.generateAsync({ type: "blob" });
-  download(blob, `${makeFilename(guide.title)}-clicktrail.zip`);
+  download(blob, `${makeFilename(safeGuide.title)}-clicktrail.zip`);
 }
 
 async function printGuide() {
-  const url = URL.createObjectURL(new Blob([createGuideHtml(guide)], { type: "text/html" }));
+  const safeGuide = await createSafeExportGuide(guide);
+  const url = URL.createObjectURL(new Blob([createGuideHtml(safeGuide)], { type: "text/html" }));
   const printable = window.open(url, "_blank", "noopener,noreferrer");
   if (!printable) return;
   printable.addEventListener("load", () => printable.print());

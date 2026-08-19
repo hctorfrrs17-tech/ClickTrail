@@ -39,7 +39,11 @@ recordButton.addEventListener("click", async () => {
     copy.textContent = "Open a regular website first. Chrome does not allow recording internal browser pages.";
     return;
   }
-  await chrome.runtime.sendMessage({ type: "START_RECORDING", tabId: tab.id, tabTitle: tab.title });
+  const result = await chrome.runtime.sendMessage({ type: "START_RECORDING", tabId: tab.id, tabTitle: tab.title });
+  if (!result?.ok) {
+    copy.textContent = result?.error ?? "Clicktrail could not start a secure recording on this page.";
+    return;
+  }
   await refresh();
 });
 

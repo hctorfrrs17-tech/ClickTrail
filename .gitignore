@@ -3,3 +3,11 @@ dist/
 release/
 *.zip
 .DS_Store
+
+# Local manual end-to-end test artifacts (the published README demo is assets/clicktrail-demo.gif)
+/e2e-*.png
+/manual-*.png
+/manual-*.mp4
+/manual-*.log
+/clicktrail-*-demo.mp4
+/clicktrail-*-recording.log

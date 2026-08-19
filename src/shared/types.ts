@@ -28,6 +28,7 @@ export type Guide = {
 export type ExtensionState = {
   recording: boolean;
   recordingTabId?: number;
+  recordingOrigin?: string;
   guide?: Guide;
 };
 

@@ -4,7 +4,7 @@ Clicktrail is an unpacked extension. It is designed to run entirely on your comp
 
 ## Quick installation
 
-1. Download `clicktrail-chrome-extension-v0.1.0.zip` from **Releases**.
+1. Download `clicktrail-chrome-extension-v0.1.1.zip` from **Releases**.
 2. Right-click the ZIP and select **Extract All** on Windows, or double-click it on macOS.
 3. Keep the extracted folder somewhere permanent. Do not select the ZIP itself.
 4. Open `chrome://extensions` in Chrome. In Microsoft Edge, open `edge://extensions`.
