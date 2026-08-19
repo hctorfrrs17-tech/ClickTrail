@@ -2,7 +2,7 @@
 
 > **Record a browser action. Let local Ollama write the instruction. Export a visual PDF with an exact click pointer.**
 
-![A real ClickTrail recording from start to guide editor](assets/clicktrail-demo.gif)
+![ClickTrail v0.2.1: public release download, Developer mode installation, local recording, visual guide editor, and PDF output](assets/clicktrail-demo.gif)
 
 ClickTrail is an **open-source, local-first Chrome extension** for turning browser workflows into polished visual PDF guides. It records a safe browser action, asks **Ollama running on your own computer** to write a clear instruction, and places a pointer precisely where the action happened.
 
@@ -22,7 +22,7 @@ ClickTrail is distributed as an unpacked Chrome extension. Chrome cannot load a 
 
 | Step | What to do |
 | --- | --- |
-| **1. Download** | Download `clicktrail-chrome-extension-v0.2.0.zip` from the [Releases](../../releases) page. |
+| **1. Download** | Download `clicktrail-chrome-extension-v0.2.1.zip` from the [Releases](../../releases) page. |
 | **2. Extract** | Unzip it to a permanent folder, such as `Documents/ClickTrail`. |
 | **3. Open Extensions** | Open `chrome://extensions` in Chrome or `edge://extensions` in Edge. |
 | **4. Enable Developer mode** | Turn on **Developer mode** in the top-right corner. |
@@ -30,6 +30,8 @@ ClickTrail is distributed as an unpacked Chrome extension. Chrome cannot load a 
 | **6. Pin ClickTrail** | Use Chrome’s puzzle icon and pin **ClickTrail** to the toolbar. |
 
 > **Developer mode does not require a terminal or coding.** It is simply the Chrome setting that permits installing an unpacked extension.
+
+> **Watch the verified path above.** The README demo begins on the public [v0.2.1 release](../../releases/tag/v0.2.1), selects the official ZIP, loads the extracted folder with Developer mode, records a real browser action, shows the exact-coordinate visual step, and opens the PDF output.
 
 ## 🧠 Required local Ollama setup
 
@@ -77,7 +79,9 @@ Recording is restricted to the origin where it started. A navigation to another 
 
 ## ✅ Real validation
 
-The GIF above is based on a manual Chromium test. ClickTrail was loaded from an unpacked folder in a clean profile, recorded a real click on `example.com`, generated a local guide step, displayed an exact pointer in the editor, and opened the visual document ready for **Save as PDF**. You can inspect the resulting one-page output at [Example Domain walkthrough PDF](assets/clicktrail-example-domain-real-guide.pdf). Full technical notes are available in [TESTING.md](TESTING.md).
+The GIF above is based on a manual Chromium v0.2.1 validation in a clean profile. It begins at the public release, selects the published ZIP, extracts and loads the root folder in `chrome://extensions`, confirms local `gemma3:1b` availability, records a real action on the public ClickTrail repository, and opens the resulting visual guide with its exact recorded pointer. The guide then reaches the PDF-only output.
+
+The validation also confirmed that detected visible private content is raster-pixelated before export; the source screenshot and automatic-mask metadata are not retained by the PDF export. You can inspect the earlier real one-page output at [Example Domain walkthrough PDF](assets/clicktrail-example-domain-real-guide.pdf). The automated suite contains **7 Vitest tests** covering guide safety, redactions, sensitive-content handling, and the local-Ollama fallback. Full technical notes are available in [TESTING.md](TESTING.md).
 
 ## ⚠️ Current limitations
 
