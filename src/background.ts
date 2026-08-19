@@ -1,4 +1,5 @@
 import { makeGuide, makeStep } from "./shared/guide";
+import { analyseLocally, ensureOllamaReady } from "./shared/ollama";
 import { cleanText, isRecordableUrl, safeHttpUrl } from "./shared/security";
 import { readState, writeState } from "./shared/storage";
 import type { RuntimeMessage } from "./shared/types";
@@ -32,9 +33,14 @@ async function handleMessage(message: RuntimeMessage, sender: chrome.runtime.Mes
     if (!isExtensionPage(sender)) return { ok: false, error: "Only Clicktrail can start a recording." };
     const tab = await chrome.tabs.get(message.tabId);
     if (!tab.id || !isRecordableUrl(tab.url)) return { ok: false, error: "Clicktrail does not record browser, sign-in, payment, or sensitive pages." };
+    try {
+      await ensureOllamaReady();
+    } catch (error) {
+      return { ok: false, error: error instanceof Error ? error.message : "Ollama local is required before recording." };
+    }
     await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ["content.js"] });
     const guide = makeGuide(tab.title ? `${cleanText(tab.title, "Untitled")} walkthrough` : "Untitled guide");
-    await writeState({ recording: true, recordingTabId: tab.id, recordingOrigin: new URL(tab.url!).origin, guide });
+    await writeState({ recording: true, recordingTabId: tab.id, recordingOrigin: new URL(tab.url!).origin, guide, lastError: undefined });
     await updateBadge(true);
     await notifyTab(tab.id, true);
     return { ok: true };
@@ -65,9 +71,23 @@ async function handleMessage(message: RuntimeMessage, sender: chrome.runtime.Mes
       // Some protected pages do not permit a screenshot. The step remains useful as a link and title.
     }
 
+    let analysis;
+    try {
+      analysis = await analyseLocally({ ...message.payload, url: captureUrl }, screenshot);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Ollama could not analyse this action.";
+      await writeState({ ...state, recording: false, recordingTabId: undefined, recordingOrigin: undefined, lastError: errorMessage });
+      await updateBadge(false);
+      await notifyTab(sourceTab.id, false);
+      return { ok: false, error: errorMessage };
+    }
     const step = makeStep({
-      title: cleanText(message.payload.title, "Complete this step"),
+      title: analysis.title,
+      note: analysis.note,
       targetLabel: cleanText(message.payload.targetLabel, "Recorded action"),
+      actionKind: message.payload.actionKind,
+      clickX: message.payload.clickX,
+      clickY: message.payload.clickY,
       url: captureUrl,
       screenshot
     });

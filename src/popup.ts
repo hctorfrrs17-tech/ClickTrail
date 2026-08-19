@@ -1,4 +1,4 @@
-type PopupState = { recording: boolean; recordingTabId?: number; guide?: { createdAt: number } };
+type PopupState = { recording: boolean; recordingTabId?: number; guide?: { createdAt: number }; lastError?: string };
 
 const recordButton = document.querySelector<HTMLButtonElement>("#record-button")!;
 const stopButton = document.querySelector<HTMLButtonElement>("#stop-button")!;
@@ -19,7 +19,7 @@ function render(state: PopupState) {
   recordButton.setAttribute("aria-label", recording ? "Recording current workflow" : "Start recording");
   stopButton.classList.toggle("hidden", !recording);
   stateLine.innerHTML = `<span class="status-dot ${recording ? "status-dot--live" : ""}"></span><span>${recording ? "Recording this tab locally" : "Ready to capture locally"}</span>`;
-  copy.textContent = recording ? "Click through your workflow. Each click becomes an editable step." : "Start recording, then complete a workflow in the current tab.";
+  copy.textContent = state.lastError ?? (recording ? "Ollama is analysing each safe action locally." : "Ollama local is required. Start recording, then complete a workflow in the current tab.");
   window.clearInterval(timerHandle);
   if (recording && state.guide?.createdAt) {
     const update = () => { timer.textContent = formatTime(Math.max(0, Math.floor((Date.now() - state.guide!.createdAt) / 1000))); };

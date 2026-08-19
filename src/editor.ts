@@ -1,5 +1,4 @@
-import JSZip from "jszip";
-import { createGuideHtml, createSafeExportGuide, makeFilename, makeGuide, normalizeRedaction } from "./shared/guide";
+import { createGuideHtml, createSafeExportGuide, makeGuide, normalizeRedaction } from "./shared/guide";
 import { safeHttpUrl } from "./shared/security";
 import { readState, writeState } from "./shared/storage";
 import type { Guide, GuideStep, Redaction } from "./shared/types";
@@ -10,15 +9,6 @@ const guideTitle = document.querySelector<HTMLInputElement>("#guide-title")!;
 const template = document.querySelector<HTMLTemplateElement>("#step-template")!;
 let guide: Guide = makeGuide();
 let saveTimeout: number | undefined;
-
-function download(blob: Blob, filename: string) {
-  const url = URL.createObjectURL(blob);
-  const anchor = document.createElement("a");
-  anchor.href = url;
-  anchor.download = filename;
-  anchor.click();
-  window.setTimeout(() => URL.revokeObjectURL(url), 1_000);
-}
 
 function scheduleSave() {
   window.clearTimeout(saveTimeout);
@@ -56,6 +46,7 @@ function createCard(step: GuideStep, index: number) {
   const note = fragment.querySelector<HTMLTextAreaElement>(".step-note")!;
   const url = fragment.querySelector<HTMLAnchorElement>(".recorded-url")!;
   const layer = fragment.querySelector<HTMLElement>(".redaction-layer")!;
+  const marker = fragment.querySelector<HTMLElement>(".action-marker")!;
   const visual = fragment.querySelector<HTMLElement>(".step-visual")!;
 
   fragment.querySelector<HTMLElement>(".step-index")!.textContent = String(index + 1).padStart(2, "0");
@@ -67,6 +58,8 @@ function createCard(step: GuideStep, index: number) {
     image.classList.add("hidden");
     missing.classList.remove("hidden");
   }
+  marker.style.left = `${(typeof step.clickX === "number" ? step.clickX : 0.5) * 100}%`;
+  marker.style.top = `${(typeof step.clickY === "number" ? step.clickY : 0.5) * 100}%`;
   visualRedactions(layer, step);
 
   title.addEventListener("input", () => { step.title = title.value; scheduleSave(); });
@@ -115,21 +108,7 @@ function render() {
   guide.steps.forEach((step, index) => stepsRoot.append(createCard(step, index)));
 }
 
-async function exportHtml() {
-  const safeGuide = await createSafeExportGuide(guide);
-  download(new Blob([createGuideHtml(safeGuide)], { type: "text/html" }), `${makeFilename(safeGuide.title)}.html`);
-}
-
-async function exportZip() {
-  const safeGuide = await createSafeExportGuide(guide);
-  const zip = new JSZip();
-  zip.file(`${makeFilename(safeGuide.title)}.html`, createGuideHtml(safeGuide));
-  zip.file("guide-data.json", JSON.stringify(safeGuide, null, 2));
-  const blob = await zip.generateAsync({ type: "blob" });
-  download(blob, `${makeFilename(safeGuide.title)}-clicktrail.zip`);
-}
-
-async function printGuide() {
+async function exportPdf() {
   const safeGuide = await createSafeExportGuide(guide);
   const url = URL.createObjectURL(new Blob([createGuideHtml(safeGuide)], { type: "text/html" }));
   const printable = window.open(url, "_blank", "noopener,noreferrer");
@@ -143,9 +122,7 @@ document.querySelector<HTMLButtonElement>("#new-guide")!.addEventListener("click
   if (!confirm("Start a new guide? Your current local guide will be replaced.")) return;
   guide = makeGuide(); render(); scheduleSave();
 });
-document.querySelectorAll<HTMLButtonElement>("#export-html, #export-html-sidebar").forEach((button) => button.addEventListener("click", exportHtml));
-document.querySelector<HTMLButtonElement>("#export-zip")!.addEventListener("click", exportZip);
-document.querySelector<HTMLButtonElement>("#print-guide")!.addEventListener("click", printGuide);
+document.querySelectorAll<HTMLButtonElement>("#export-pdf, #export-pdf-sidebar").forEach((button) => button.addEventListener("click", exportPdf));
 
 (async () => {
   const state = await readState();

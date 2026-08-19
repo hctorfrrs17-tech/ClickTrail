@@ -46,5 +46,20 @@ export function isSensitiveTarget(target: HTMLElement): boolean {
   const type = field instanceof HTMLInputElement ? field.type.toLowerCase() : "";
   const autocomplete = (field.getAttribute("autocomplete") ?? "").toLowerCase();
   const hint = `${field.name} ${field.id} ${field.getAttribute("aria-label") ?? ""}`.toLowerCase();
-  return type === "password" || autocomplete.includes("password") || autocomplete.includes("cc-") || autocomplete === "one-time-code" || /(card|cvv|security.?code|secret|token)/.test(hint);
+  return type === "password" || type === "email" || type === "tel" || autocomplete.includes("password") || autocomplete.includes("cc-") || autocomplete === "one-time-code" || /(card|cvv|security.?code|secret|token|email|phone|address|name|birth|passport|ssn)/.test(hint);
+}
+
+export function isSafeInstructionValue(value: unknown): value is string {
+  const text = cleanText(value);
+  return Boolean(text) && text.length <= 120 && !/@|(?:\d[ -]?){6,}|(?:api|access)[ _-]?key|bearer|token|secret/i.test(text);
+}
+
+/** Returns text that may be used in a local instruction. Personal, credential-like and long values are never returned. */
+export function permittedInstructionText(target: HTMLElement): string | undefined {
+  const field = target.closest<HTMLInputElement | HTMLTextAreaElement>("input, textarea");
+  if (!field || isSensitiveTarget(field)) return undefined;
+  const type = field instanceof HTMLInputElement ? field.type.toLowerCase() : "text";
+  if (!/^(text|search|url|textarea)$/.test(type)) return undefined;
+  const value = cleanText(field.value);
+  return isSafeInstructionValue(value) ? value : undefined;
 }

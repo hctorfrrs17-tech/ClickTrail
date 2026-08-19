@@ -12,6 +12,9 @@ export type GuideStep = {
   note: string;
   url: string;
   targetLabel: string;
+  actionKind: "click" | "type";
+  clickX: number;
+  clickY: number;
   screenshot?: string;
   createdAt: number;
   redactions: Redaction[];
@@ -30,13 +33,24 @@ export type ExtensionState = {
   recordingTabId?: number;
   recordingOrigin?: string;
   guide?: Guide;
+  lastError?: string;
+};
+
+export type CapturePayload = {
+  targetLabel: string;
+  url: string;
+  pageTitle: string;
+  actionKind: "click" | "type";
+  clickX: number;
+  clickY: number;
+  permittedText?: string;
 };
 
 export type RuntimeMessage =
   | { type: "GET_STATE" }
   | { type: "START_RECORDING"; tabId: number; tabTitle?: string }
   | { type: "STOP_RECORDING" }
-  | { type: "CAPTURE_STEP"; payload: { title: string; targetLabel: string; url: string } }
+  | { type: "CAPTURE_STEP"; payload: CapturePayload }
   | { type: "UPDATE_GUIDE"; guide: Guide }
   | { type: "CLEAR_GUIDE" }
   | { type: "OPEN_EDITOR" }

@@ -1,10 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "Clicktrail",
-  "version": "0.1.1",
-  "description": "Record browser workflows and create private visual guides without a server.",
+  "name": "ClickTrail",
+  "version": "0.2.0",
+  "description": "Turn safe browser actions into private, local-Ollama visual PDF guides.",
   "action": {
-    "default_title": "Clicktrail",
+    "default_title": "ClickTrail",
     "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/icon-16.png",
@@ -24,7 +24,8 @@
     "type": "module"
   },
   "permissions": ["activeTab", "storage", "scripting", "unlimitedStorage"],
+  "host_permissions": ["http://127.0.0.1:11434/*"],
   "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'; base-uri 'self'"
+    "extension_pages": "script-src 'self'; object-src 'self'; base-uri 'self'; connect-src http://127.0.0.1:11434"
   }
 }

@@ -14,13 +14,16 @@ export function makeGuide(title = "Untitled guide"): Guide {
   return { id: crypto.randomUUID(), title, createdAt: now, updatedAt: now, steps: [] };
 }
 
-export function makeStep(payload: Pick<GuideStep, "title" | "targetLabel" | "url" | "screenshot">): GuideStep {
+export function makeStep(payload: Pick<GuideStep, "title" | "targetLabel" | "url" | "screenshot"> & Partial<Pick<GuideStep, "note" | "actionKind" | "clickX" | "clickY">>): GuideStep {
   return {
     id: crypto.randomUUID(),
     title: cleanText(payload.title, "Complete this step"),
-    note: "",
+    note: cleanText(payload.note),
     url: safeHttpUrl(payload.url) ?? "",
     targetLabel: cleanText(payload.targetLabel, "Recorded action"),
+    actionKind: payload.actionKind ?? "click",
+    clickX: Math.min(1, Math.max(0, payload.clickX ?? 0.5)),
+    clickY: Math.min(1, Math.max(0, payload.clickY ?? 0.5)),
     screenshot: isSafeScreenshot(payload.screenshot) ? payload.screenshot : undefined,
     createdAt: Date.now(),
     redactions: []
@@ -53,8 +56,8 @@ export function makeFilename(value: string): string {
   return value.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "clicktrail-guide";
 }
 
-function redactScreenshot(dataUrl: string, redactions: Redaction[]): Promise<string> {
-  if (!redactions.length || typeof document === "undefined") return Promise.resolve(dataUrl);
+function annotateScreenshot(dataUrl: string, step: GuideStep, index: number): Promise<string> {
+  if (typeof document === "undefined") return Promise.resolve(dataUrl);
   return new Promise((resolve) => {
     const image = new Image();
     image.onload = () => {
@@ -64,8 +67,40 @@ function redactScreenshot(dataUrl: string, redactions: Redaction[]): Promise<str
       const context = canvas.getContext("2d");
       if (!context) return resolve(dataUrl);
       context.drawImage(image, 0, 0);
+      const x = Math.round(step.clickX * canvas.width);
+      const y = Math.round(step.clickY * canvas.height);
+      const startX = x > canvas.width * 0.3 ? x - Math.min(128, canvas.width * 0.16) : x + Math.min(128, canvas.width * 0.16);
+      const startY = y > canvas.height * 0.3 ? y - Math.min(108, canvas.height * 0.16) : y + Math.min(108, canvas.height * 0.16);
+      context.save();
+      context.strokeStyle = "#ff5269";
+      context.fillStyle = "#ff5269";
+      context.lineWidth = Math.max(5, Math.round(canvas.width / 180));
+      context.lineCap = "round";
+      context.beginPath();
+      context.moveTo(startX, startY);
+      context.lineTo(x, y);
+      context.stroke();
+      const angle = Math.atan2(y - startY, x - startX);
+      const head = Math.max(14, Math.round(canvas.width / 58));
+      context.beginPath();
+      context.moveTo(x, y);
+      context.lineTo(x - head * Math.cos(angle - Math.PI / 6), y - head * Math.sin(angle - Math.PI / 6));
+      context.lineTo(x - head * Math.cos(angle + Math.PI / 6), y - head * Math.sin(angle + Math.PI / 6));
+      context.closePath();
+      context.fill();
+      context.font = `700 ${Math.max(18, Math.round(canvas.width / 42))}px ui-monospace, monospace`;
+      const label = `STEP ${index + 1}`;
+      const padding = Math.max(10, Math.round(canvas.width / 100));
+      const labelWidth = context.measureText(label).width + padding * 2;
+      const labelX = Math.min(Math.max(12, startX - labelWidth / 2), canvas.width - labelWidth - 12);
+      const labelY = Math.min(Math.max(12, startY - 20), canvas.height - 54);
+      context.fillStyle = "#111827";
+      context.fillRect(labelX, labelY, labelWidth, 42);
+      context.fillStyle = "#ffffff";
+      context.fillText(label, labelX + padding, labelY + 28);
+      context.restore();
       context.fillStyle = "#080d16";
-      redactions.map(normalizeRedaction).forEach((redaction) => context.fillRect(
+      step.redactions.map(normalizeRedaction).forEach((redaction) => context.fillRect(
         Math.floor(redaction.x * canvas.width),
         Math.floor(redaction.y * canvas.height),
         Math.ceil(redaction.width * canvas.width),
@@ -79,13 +114,16 @@ function redactScreenshot(dataUrl: string, redactions: Redaction[]): Promise<str
 }
 
 export async function createSafeExportGuide(guide: Guide): Promise<Guide> {
-  const steps = await Promise.all(guide.steps.map(async (step) => ({
+  const steps = await Promise.all(guide.steps.map(async (step, index) => ({
     ...step,
     title: cleanText(step.title, "Complete this step"),
     note: cleanText(step.note),
     targetLabel: cleanText(step.targetLabel, "Recorded action"),
+    actionKind: step.actionKind === "type" ? ("type" as const) : ("click" as const),
+    clickX: Math.min(1, Math.max(0, typeof step.clickX === "number" ? step.clickX : 0.5)),
+    clickY: Math.min(1, Math.max(0, typeof step.clickY === "number" ? step.clickY : 0.5)),
     url: safeHttpUrl(step.url) ?? "",
-    screenshot: isSafeScreenshot(step.screenshot) ? await redactScreenshot(step.screenshot, step.redactions) : undefined,
+    screenshot: isSafeScreenshot(step.screenshot) ? await annotateScreenshot(step.screenshot, step, index) : undefined,
     redactions: []
   })));
   return { ...guide, title: cleanText(guide.title, "Untitled guide"), steps };

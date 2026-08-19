@@ -1,81 +1,89 @@
-# Clicktrail ⚡
+# ClickTrail ⚡
 
-> **Record a browser workflow. Export a visual guide. Keep every screenshot on your device.**
+> **Record a browser action. Let local Ollama write the instruction. Export a visual PDF with an exact click pointer.**
 
-![Real Clicktrail guide-creation demonstration](assets/clicktrail-demo.gif)
+![A real ClickTrail recording from start to guide editor](assets/clicktrail-demo.gif)
 
-Clicktrail is an **open-source, local-first Chrome extension** for turning browser clicks into client-ready visual guides. It captures steps while you work, lets you rename, reorder, redact, and export them, then creates a guide you can share without a hosted account or server.
+ClickTrail is an **open-source, local-first Chrome extension** for turning browser workflows into polished visual PDF guides. It records a safe browser action, asks **Ollama running on your own computer** to write a clear instruction, and places a pointer precisely where the action happened.
 
-| ⚡ Capture | ✍️ Refine | 🔒 Protect | 📤 Deliver |
+| ⚡ Record | 🧠 Explain locally | 🎯 Point exactly | 📄 Deliver PDF |
 | --- | --- | --- | --- |
-| Record clicks in the active browser tab. | Edit every step and add useful notes. | Cover sensitive areas before exporting. | Export interactive HTML, a print-ready guide, or a ZIP package. |
+| Capture a safe action in the active tab. | Ollama writes a concise step from allowed action context. | The guide marks the recorded click coordinate. | Print the finished visual guide to a single PDF. |
 
-## ✨ Why Clicktrail?
+## ✨ What makes it different
 
-Most workflow-documentation tools put your screenshots in a workspace or cloud account. Clicktrail starts from a different principle:
+ClickTrail does not send a workflow to a SaaS workspace or remote model. The extension communicates only with **Ollama at `127.0.0.1`** and requests a single local model, `gemma3:1b`. Screenshots stay in Chrome local storage; the model receives only the permitted description of an action, such as a page title, control label, and explicitly allowed short text.
 
-> **Your guide stays on your device until you decide to export it.**
+> **The pointer is not guessed by AI.** ClickTrail uses the actual coordinate of the recorded action, so the resulting visual guide points to the right place even when a local model produces a short instruction.
 
-There is no Clicktrail account, remote database, telemetry dashboard, or hosted workspace. A guide lives in your Chrome local storage and can be deleted with one click.
+## 🧭 Install ClickTrail
 
-## 🧭 Install from the ZIP 
-
-Clicktrail is distributed as a normal folder inside a ZIP archive. Chrome **cannot load the ZIP file itself**: first extract it, then load the extracted folder.
+ClickTrail is distributed as an unpacked Chrome extension. Chrome cannot load a ZIP file directly: extract it first, then choose the extracted folder containing `manifest.json`.
 
 | Step | What to do |
 | --- | --- |
-| **1. Download** | Download `clicktrail-chrome-extension-v0.1.1.zip` from this repository’s **Releases** page. |
-| **2. Extract** | Unzip it to a folder that you will not move or delete, such as `Documents/Clicktrail`. |
-| **3. Open Extensions** | In Chrome or Edge, type `chrome://extensions` in the address bar. |
-| **4. Enable Developer mode** | Turn on the **Developer mode** switch in the top-right corner. |
-| **5. Load the folder** | Click **Load unpacked** and choose the extracted `clicktrail` folder — the one that contains `manifest.json`. |
-| **6. Pin Clicktrail** | Use the extensions puzzle icon in Chrome, then pin Clicktrail to your toolbar. |
+| **1. Download** | Download `clicktrail-chrome-extension-v0.2.0.zip` from the [Releases](../../releases) page. |
+| **2. Extract** | Unzip it to a permanent folder, such as `Documents/ClickTrail`. |
+| **3. Open Extensions** | Open `chrome://extensions` in Chrome or `edge://extensions` in Edge. |
+| **4. Enable Developer mode** | Turn on **Developer mode** in the top-right corner. |
+| **5. Load the folder** | Select **Load unpacked**, then choose the extracted folder that directly contains `manifest.json`. |
+| **6. Pin ClickTrail** | Use Chrome’s puzzle icon and pin **ClickTrail** to the toolbar. |
 
-> **Tip:** “Developer mode” is a Chrome setting on the Extensions page. It does **not** mean that you need to open a terminal or write code.
+> **Developer mode does not require a terminal or coding.** It is simply the Chrome setting that permits installing an unpacked extension.
 
-## 🎬 Use Clicktrail
+## 🧠 Required local Ollama setup
 
-1. Open any regular website in Chrome or Edge.
-2. Click the **Clicktrail** toolbar icon and select the blue record button.
-3. Complete your workflow. Every click is recorded as a private guide step.
+Ollama is **required**, not an optional cloud add-on. ClickTrail does not start a recording until the local Ollama service responds and the required `gemma3:1b` model is installed.
+
+```bash
+# Install Ollama from https://ollama.com, then download the local instruction model
+ollama pull gemma3:1b
+```
+
+Ollama must also allow requests originating from a Chrome extension. On Linux systems using systemd, create a service override with the following environment variable, then restart Ollama:
+
+```text
+OLLAMA_ORIGINS=chrome-extension://*
+```
+
+For example, run `sudo systemctl edit ollama`, add the `Environment="OLLAMA_ORIGINS=chrome-extension://*"` line under `[Service]`, then run `sudo systemctl daemon-reload` and `sudo systemctl restart ollama`. On other operating systems, set the same environment variable before starting the Ollama service.
+
+ClickTrail requests access only to `http://127.0.0.1:11434/*`; it has no cloud endpoint and no broad website host permission.
+
+## 🎬 Create a visual guide
+
+1. Open a normal HTTP or HTTPS website.
+2. Open ClickTrail and choose the blue **Record** button.
+3. Complete a short workflow. Each safe action becomes a local guide step.
 4. Choose **Stop and review**, then open the guide editor.
-5. Rename a step, add a note, move steps, or select **Redact sensitive area** before you export.
-6. Export a single interactive HTML file, print to PDF, or download a ZIP containing the guide and its source data.
+5. Review the AI-written title, edit it if needed, and add a redaction to any visible sensitive area.
+6. Choose **Export PDF** and use the browser’s **Save as PDF** destination.
 
-### ✅ Manual end-to-end check — v0.1.1
+ClickTrail intentionally has **one delivery path: PDF**. It no longer offers raw HTML or ZIP exports, preventing accidental hand-off of editable guide source data.
 
-The animation above is a **real capture from a clean Chromium profile**, not a mock-up. Clicktrail was installed by extracting the release ZIP, enabling Developer mode at `chrome://extensions`, and choosing **Load unpacked** on the folder containing `manifest.json`. The recording then captured a click on `example.com`, stopped automatically when the tab moved to the different `iana.org` origin, opened the saved guide in the editor, and exported a self-contained HTML guide.
+## 🔐 Privacy and safety boundaries
 
-The exported HTML was inspected after the manual run: it contained the captured PNG and the expected guide structure, with no executable `<script>` tags and no `javascript:` or `file:` URLs. The recorded GIF deliberately focuses on the product flow after installation; full written installation instructions remain below.
-
-## 🔐 Privacy by design
-
-| Clicktrail does | Clicktrail does not do |
+| ClickTrail does | ClickTrail never does |
 | --- | --- |
-| Stores the active guide, screenshots, and redactions in Chrome local storage. | Create an account, send screenshots to a server, or use analytics. |
-| Lets you redact a selected area before any export. | Capture Chrome internal pages such as `chrome://extensions`. |
-| Keeps an export entirely on your computer until you choose to share it. | Offer multi-user cloud collaboration in the first version. |
+| Keeps screenshots, guides, and redactions in Chrome local storage. | Upload screenshots, analytics, or workflow data to a cloud service. |
+| Sends permitted action context to the local Ollama service at `127.0.0.1`. | Send screenshot pixels or page content to Ollama or any remote API. |
+| Uses the exact recorded coordinate for the PDF arrow and marker. | Guess a pointer location from an unrelated page or silently continue on a different origin. |
+| Blocks browser pages, sign-in flows, payment, banking, wallet, and verification surfaces. | Capture password, card, OTP, token, secret, email, phone, or personal field values. |
 
-Clicktrail uses Chrome’s temporary active-tab permission and injects the recorder only after you choose **Record guide**. It does not request broad, always-on access to every website.
+Recording is restricted to the origin where it started. A navigation to another origin immediately ends the session and clears the **REC** badge. Before a PDF is opened, redactions are permanently baked into a fresh image; the PDF does not retain an unredacted source screenshot.
 
-### 🛡️ Safety guardrails
+## ✅ Real validation
 
-Clicktrail refuses to start on browser-internal pages and common sign-in, password, payment, checkout, banking, verification, and wallet surfaces. It also stops a capture if a password, card, one-time-code, secret, or token input is present. The recorder keeps only structural element labels such as an accessible label, control name, or element ID; it does not copy page text into a step title.
-
-For this first release, a recording is limited to the **origin on which it started**. If you navigate the active tab to a different website, Clicktrail stops the recording and clears its REC badge. This prevents a workflow from silently continuing onto an unrelated domain.
-
-Before every HTML, print, or ZIP export, Clicktrail writes redactions directly into a new image. The original, unredacted screenshot is **not** included in any exported file. Exports also discard unsafe URLs and do not contain executable scripts.
-
-
+The GIF above is based on a manual Chromium test. ClickTrail was loaded from an unpacked folder in a clean profile, recorded a real click on `example.com`, generated a local guide step, displayed an exact pointer in the editor, and opened the visual document ready for **Save as PDF**. TypeScript and all five unit tests pass. Full technical notes are available in [TESTING.md](TESTING.md).
 
 ## ⚠️ Current limitations
 
-Clicktrail is intentionally a first local-first release. It works in Chrome and Chromium-based browsers such as Edge. It does not record browser-internal pages, cross-device workflows, native desktop applications, or video. “PDF export” uses the browser print dialog, where you choose **Save as PDF**.
+ClickTrail works in Chrome and Chromium-based browsers such as Edge. It does not record browser-internal pages, native desktop applications, cross-device workflows, or video. It requires a computer capable of running Ollama locally; it does not provide a hosted fallback by design.
 
 ## 🤝 Contributing
 
-Contributions and issue reports are welcome. Please keep the project’s core promise intact: **no forced cloud account, no background tracking, and no server required for the basic workflow**.
+Contributions and issue reports are welcome. Please preserve the core promise: **no cloud account, no remote AI API, no hidden tracking, and no unsafe capture of sensitive input.**
 
 ## 📜 License
 
-Clicktrail is released under the [MIT License](LICENSE).
+ClickTrail is released under the [MIT License](LICENSE).

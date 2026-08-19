@@ -13,3 +13,10 @@
 - [x] Manually install the unpacked extension in Chrome and create a real visual guide from start to export.
 - [x] Record the real installation and guide-creation test, then replace the README hero image with the published demonstration.
 - [x] Document the observed installation and guide-creation flow, then publish the security-hardened release.
+- [x] Define the required local Ollama workflow, connectivity checks, model expectations, and strict sensitive-data exclusions.
+- [x] Generate intelligible, locally analysed guide steps from clicks and permitted typed text, with no capture of sensitive field values.
+- [x] Render visible click arrows and labels into guide visuals at the recorded interaction coordinates.
+- [x] Restrict guide delivery to a safe PDF export and remove HTML and ZIP export paths from the product UI.
+- [x] Verify the new end-to-end local workflow and record a concise demonstration from recording start through the finished guide.
+- [x] Update the README, installation guidance, release notes, visible ClickTrail branding, and a GitHub social-preview asset.
+- [ ] User will upload `assets/clicktrail-social-preview.jpg` in GitHub Settings → General → Social preview.

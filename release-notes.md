@@ -1,17 +1,21 @@
-## Clicktrail v0.1.1 — verified local-first hardening
+## ClickTrail v0.2.0 — local AI visual PDF guides
 
-Clicktrail v0.1.1 keeps visual workflow capture on the device and adds a verified hardened release flow. Recording is injected only when the user starts it, recording stops when the active tab moves to a different origin, and export images are rebuilt with redactions applied.
+ClickTrail now requires **Ollama running locally** to turn safe recorded actions into clear guide instructions. Every PDF step includes a permanent pointer at the exact recorded click coordinate, while redactions are baked into a new image before the document opens.
 
-### Verified manually
+### What changed
 
-This build was installed from an extracted ZIP in a clean Chromium profile. It captured a real click on `example.com`, automatically stopped on navigation to `iana.org`, opened the resulting guide in the editor, and exported a self-contained HTML guide. The exported output was checked for executable scripts and unsafe `javascript:` and `file:` URL schemes.
+| Area | v0.2.0 update |
+| --- | --- |
+| Local AI | Requires Ollama at `127.0.0.1` with `gemma3:1b`; no remote AI API exists. |
+| Privacy | Screenshots stay in Chrome storage. Only permitted action context is sent to the local model. |
+| Visual quality | Each step includes an exact click arrow and marker. |
+| Export | PDF only; raw HTML and ZIP export paths were removed. |
+| Safety | Password, payment, OTP, token, email, phone, and personal field values remain excluded. |
 
-### Install
+### Before recording
 
-1. Download the ZIP below.
-2. Extract it.
-3. Open `chrome://extensions`.
-4. Enable **Developer mode**.
-5. Click **Load unpacked** and select the extracted folder containing `manifest.json`.
+1. Install Ollama and run `ollama pull gemma3:1b`.
+2. Start Ollama with `OLLAMA_ORIGINS=chrome-extension://*` configured for Chrome extension access.
+3. Extract the ZIP, open `chrome://extensions`, enable **Developer mode**, and select **Load unpacked** on the folder containing `manifest.json`.
 
-> Chrome cannot load the ZIP directly; extract it first.
+> Chrome cannot load the ZIP directly; extract it first. ClickTrail works entirely on the computer where Ollama runs.

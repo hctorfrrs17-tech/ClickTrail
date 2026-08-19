@@ -1,6 +1,6 @@
 {
   "name": "clicktrail",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "description": "A local-first Chrome extension that turns browser clicks into visual guides.",
@@ -9,9 +9,6 @@
     "check": "tsc --noEmit",
     "test": "vitest run",
     "package": "pnpm build && node scripts/package.mjs"
-  },
-  "dependencies": {
-    "jszip": "^3.10.1"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.302",

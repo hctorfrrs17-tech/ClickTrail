@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createGuideHtml, createSafeExportGuide, makeGuide, makeStep, normalizeRedaction } from "../src/shared/guide";
-import { isRecordableUrl, isSafeScreenshot, safeHttpUrl } from "../src/shared/security";
+import { parseLocalAnalysis } from "../src/shared/ollama";
+import { isRecordableUrl, isSafeInstructionValue, isSafeScreenshot, safeHttpUrl } from "../src/shared/security";
 
 describe("Clicktrail guide helpers", () => {
   it("keeps redactions inside the screenshot boundary", () => {
@@ -27,5 +28,19 @@ describe("Clicktrail guide helpers", () => {
     expect(isRecordableUrl("https://example.com/project/settings")).toBe(true);
     expect(isSafeScreenshot("data:image/png;base64,aGVsbG8=")).toBe(true);
     expect(isSafeScreenshot("data:text/html;base64,PHNjcmlwdD4=")).toBe(false);
+  });
+
+  it("allows only short non-sensitive text for local instructions", () => {
+    expect(isSafeInstructionValue("hello")).toBe(true);
+    expect(isSafeInstructionValue("user@example.com")).toBe(false);
+    expect(isSafeInstructionValue("4111 1111 1111 1111")).toBe(false);
+    expect(isSafeInstructionValue("Bearer local-secret")).toBe(false);
+  });
+
+  it("normalizes the local Ollama response and keeps a safe fallback", () => {
+    const payload = { targetLabel: "search field", url: "https://example.com", pageTitle: "Example Domain", actionKind: "type" as const, clickX: 0.4, clickY: 0.3, permittedText: "hello" };
+    expect(parseLocalAnalysis({ title: "Search for hello", note: "Enter hello in the search field." }, payload)).toEqual({ title: "Search for hello", note: "Enter hello in the search field." });
+    expect(parseLocalAnalysis({ title: "Click", note: "User clicked a link." }, payload)).toEqual({ title: "Enter “hello”", note: "Enter the shown non-sensitive text in search field." });
+    expect(parseLocalAnalysis(undefined, payload)).toEqual({ title: "Enter “hello”", note: "Enter the shown non-sensitive text in search field." });
   });
 });
