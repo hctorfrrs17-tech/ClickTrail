@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clicktrail</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="popup-body">
+    <main class="popup-shell">
+      <header class="brand-row"><span class="brand-mark">C</span><span>CLICKTRAIL</span><span class="version">LOCAL-FIRST</span></header>
+      <section class="recorder-card">
+        <p class="eyebrow">Record a guide</p>
+        <div id="record-state" class="status-line"><span class="status-dot"></span><span>Ready to capture locally</span></div>
+        <div id="timer" class="timer">00:00</div>
+        <button id="record-button" class="record-button" type="button" aria-label="Start recording"><span></span></button>
+        <p id="record-copy" class="helper-copy">Start recording, then complete a workflow in the current tab.</p>
+        <button id="stop-button" class="secondary-button hidden" type="button">Stop and review</button>
+      </section>
+      <section class="privacy-card"><p class="eyebrow">Privacy</p><div><span class="shield">⌁</span><span><strong>Local only</strong><br>Nothing is uploaded or tracked.</span></div></section>
+      <section class="guide-actions"><button id="open-editor" class="primary-button" type="button">Open guide editor <span>↗</span></button><button id="clear-guide" class="text-button" type="button">Clear local guide</button></section>
+      <footer>Open source · Your workflow stays on this device</footer>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>
