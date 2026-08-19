@@ -7,4 +7,4 @@
 - [x] Export a guide as a self-contained interactive HTML file, a print-ready document, and a ZIP archive.
 - [x] Add automated unit tests for guide data, redaction, and export helpers.
 - [x] Create English visual documentation with exact instructions for extracting the ZIP and using Chrome Developer mode with Load unpacked.
-- [ ] Package an unpacked extension ZIP, create a public GitHub repository, and publish the source and release artifact.
+- [x] Package an unpacked extension ZIP, create a public GitHub repository, and publish the source and release artifact.
