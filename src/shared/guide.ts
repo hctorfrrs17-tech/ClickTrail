@@ -14,6 +14,22 @@ export function makeGuide(title = "Untitled guide"): Guide {
   return { id: crypto.randomUUID(), title, createdAt: now, updatedAt: now, steps: [] };
 }
 
+export function makeNavigationStep(url: string): GuideStep | undefined {
+  const safeUrl = safeHttpUrl(url);
+  if (!safeUrl) return undefined;
+  const destination = new URL(safeUrl).hostname;
+  return makeStep({
+    title: `Go to ${destination}`,
+    note: `Open your browser and go to ${safeUrl}.`,
+    targetLabel: "Browser address bar",
+    url: safeUrl,
+    screenshot: undefined,
+    actionKind: "type",
+    clickX: 0.5,
+    clickY: 0.5
+  });
+}
+
 export function normalizeRedaction(redaction: Redaction): Redaction {
   const x = Math.min(Math.max(redaction.x, 0), 1);
   const y = Math.min(Math.max(redaction.y, 0), 1);

@@ -70,6 +70,7 @@ function createCard(step: GuideStep, index: number) {
   }
   marker.style.left = `${(typeof step.clickX === "number" ? step.clickX : 0.5) * 100}%`;
   marker.style.top = `${(typeof step.clickY === "number" ? step.clickY : 0.5) * 100}%`;
+  marker.classList.toggle("hidden", !step.screenshot);
   visualRedactions(layer, step);
 
   title.addEventListener("input", () => { step.title = title.value; scheduleSave(); });

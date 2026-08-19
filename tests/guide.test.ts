@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createGuideHtml, createSafeExportGuide, makeGuide, makeStep, normalizeRedaction } from "../src/shared/guide";
+import { createGuideHtml, createSafeExportGuide, makeGuide, makeNavigationStep, makeStep, normalizeRedaction } from "../src/shared/guide";
 import { parseLocalAnalysis } from "../src/shared/ollama";
 import { hasExplicitSensitiveText, isRecordableUrl, isSafeInstructionValue, isSafeScreenshot, safeHttpUrl } from "../src/shared/security";
 
@@ -15,6 +15,17 @@ describe("Clicktrail guide helpers", () => {
     expect(html).toContain("Client &lt;handoff&gt;");
     expect(html).toContain("Open &lt;settings&gt;");
     expect(html).not.toContain("Open <settings>");
+  });
+
+  it("starts each new guide with a safe, explicit navigation instruction", () => {
+    expect(makeNavigationStep("https://example.com/docs?topic=public")).toMatchObject({
+      title: "Go to example.com",
+      note: "Open your browser and go to https://example.com/docs?topic=public.",
+      targetLabel: "Browser address bar",
+      url: "https://example.com/docs?topic=public",
+      actionKind: "type"
+    });
+    expect(makeNavigationStep("javascript:alert(1)")).toBeUndefined();
   });
 
   it("rejects unsafe guide destinations and sensitive recording pages", async () => {

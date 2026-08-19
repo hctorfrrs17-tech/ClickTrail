@@ -1,4 +1,4 @@
-import { makeGuide, makeStep } from "./shared/guide";
+import { makeGuide, makeNavigationStep, makeStep } from "./shared/guide";
 import { analyseLocally, ensureOllamaReady } from "./shared/ollama";
 import { cleanText, isRecordableUrl, safeHttpUrl } from "./shared/security";
 import { readState, writeState } from "./shared/storage";
@@ -40,6 +40,8 @@ async function handleMessage(message: RuntimeMessage, sender: chrome.runtime.Mes
     }
     await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ["content.js"] });
     const guide = makeGuide(tab.title ? `${cleanText(tab.title, "Untitled")} walkthrough` : "Untitled guide");
+    const navigationStep = makeNavigationStep(tab.url ?? "");
+    if (navigationStep) guide.steps.push(navigationStep);
     await writeState({ recording: true, recordingTabId: tab.id, recordingOrigin: new URL(tab.url!).origin, guide, lastError: undefined });
     await updateBadge(true);
     await notifyTab(tab.id, true);

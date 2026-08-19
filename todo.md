@@ -32,3 +32,5 @@
 - [x] Reinject the recorder after an allowed same-origin navigation so the release ZIP download becomes a recorded visual step without weakening origin-lock protection.
 - [x] Record and export a complete multi-step PDF guide: open GitHub, open the ClickTrail repository, open Releases, and download the official ZIP.
 - [x] Document and apply a step-by-step review standard for future project demonstrations before publishing their assets.
+- [x] Add a mandatory first guide step that tells the user to navigate to the public starting URL before recording detailed actions.
+- [x] Regenerate the GitHub release-download test PDF so its first step explicitly says “Go to github.com”.

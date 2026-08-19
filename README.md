@@ -55,10 +55,10 @@ ClickTrail requests access only to `http://127.0.0.1:11434/*`; it has no cloud e
 ## 🎬 Create a visual guide
 
 1. Open a normal HTTP or HTTPS website.
-2. Open ClickTrail and choose the blue **Record** button.
-3. Complete a short workflow. Each safe action becomes a local guide step.
+2. Open ClickTrail and choose the blue **Record** button. Every new guide automatically begins with a clear destination step, such as **“Go to example.com”**.
+3. Complete a short workflow. Each safe action becomes the next local guide step, in the order it happened.
 4. Choose **Stop and review**, then open the guide editor.
-5. Review the AI-written title, edit it if needed, and add a manual redaction to any area that should not be shared.
+5. Review the destination step, AI-written titles, screenshots, and arrows in sequence; edit them if needed, and add a manual redaction to any area that should not be shared.
 6. Choose **Export PDF** and use the browser’s **Save as PDF** destination.
 
 ClickTrail intentionally has **one delivery path: PDF**. It no longer offers raw HTML or ZIP exports, preventing accidental hand-off of editable guide source data.
@@ -81,7 +81,7 @@ Recording is restricted to the origin where it started. ClickTrail safely reinst
 
 The GIF above is based on a manual Chromium validation in a clean profile. It begins from a blank tab, loads the public ClickTrail repository, starts the local recording, moves to the release page on the same GitHub origin, selects the published `clicktrail-chrome-extension-v0.2.1.zip`, and stops recording. The recording therefore contains the actual release-download click, not a placeholder action.
 
-The validation also confirmed that detected visible private content is raster-pixelated before export; the source screenshot and automatic-mask metadata are not retained by the PDF export. Inspect the resulting two-page [GitHub-to-release-download walkthrough PDF](assets/clicktrail-v021-complete-github-release-zip-guide.pdf): it selects the ClickTrail repository from GitHub, opens the v0.2.1 release, and selects the official ZIP. The automated suite contains **7 Vitest tests** covering guide safety, redactions, sensitive-content handling, and the local-Ollama fallback. Full technical notes are available in [TESTING.md](TESTING.md).
+The validation also confirmed that detected visible private content is raster-pixelated before export; the source screenshot and automatic-mask metadata are not retained by the PDF export. Inspect the resulting three-page [GitHub-to-release-download walkthrough PDF](assets/clicktrail-v021-github-navigation-first-guide.pdf): it begins with **“Go to github.com”**, then selects the ClickTrail repository, opens the v0.2.1 release, and selects the official ZIP. The automated suite contains **8 Vitest tests** covering guide safety, redactions, sensitive-content handling, the automatic navigation step, and the local-Ollama fallback. Full technical notes are available in [TESTING.md](TESTING.md).
 
 ## ⚠️ Current limitations
 
