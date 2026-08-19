@@ -26,3 +26,7 @@
 - [x] Add clear README documentation of automatic sensitive-content pixelation and include the real demonstration PDF as a repository asset.
 - [x] Record a new end-to-end demonstration that starts at the public ClickTrail Releases page, downloads the official ZIP, installs it, and completes a visual guide.
 - [x] Replace the README demonstration with the new release-to-guide recording and create a text-only ClickTrail social-preview image.
+- [x] Export, verify, and deliver the PDF that corresponds exactly to the v0.2.1 release-to-guide demonstration.
+- [x] Re-record the demo from a blank browser tab: start ClickTrail, navigate to the ClickTrail repository, open Releases, download the official ZIP, and stop recording.
+- [x] Export, verify, and publish the PDF generated from that exact blank-tab-to-release-download recording.
+- [x] Reinject the recorder after an allowed same-origin navigation so the release ZIP download becomes a recorded visual step without weakening origin-lock protection.

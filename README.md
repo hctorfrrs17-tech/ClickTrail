@@ -31,7 +31,7 @@ ClickTrail is distributed as an unpacked Chrome extension. Chrome cannot load a 
 
 > **Developer mode does not require a terminal or coding.** It is simply the Chrome setting that permits installing an unpacked extension.
 
-> **Watch the verified path above.** The README demo begins on the public [v0.2.1 release](../../releases/tag/v0.2.1), selects the official ZIP, loads the extracted folder with Developer mode, records a real browser action, shows the exact-coordinate visual step, and opens the PDF output.
+> **Watch the verified path above.** The README demo begins on a blank browser tab, opens the public ClickTrail repository, starts the local recording, opens [Releases](../../releases/tag/v0.2.1), downloads the official v0.2.1 ZIP, and stops the recording immediately afterward.
 
 ## 🧠 Required local Ollama setup
 
@@ -73,15 +73,15 @@ ClickTrail intentionally has **one delivery path: PDF**. It no longer offers raw
 | Pixelates detected private text and sensitive field regions directly into the exported image. | Preserve detected passwords, emails, phone numbers, card data, OTPs, tokens, or secrets in the PDF image. |
 | Blocks browser pages, sign-in flows, payment, banking, wallet, and verification surfaces. | Capture sensitive form values or send them to Ollama. |
 
-Recording is restricted to the origin where it started. A navigation to another origin immediately ends the session and clears the **REC** badge. Before a PDF is opened, ClickTrail detects visible sensitive inputs and explicit private text such as personal emails, phone numbers, credential-like tokens, and card-style values. Their regions are **pixelated into a fresh export image**, while any manual redactions remain permanently baked on top. The PDF does not retain an unredacted source screenshot or the automatic masking metadata.
+Recording is restricted to the origin where it started. ClickTrail safely reinstalls its recorder after an allowed same-origin navigation, but a navigation to another origin immediately ends the session and clears the **REC** badge. Before a PDF is opened, ClickTrail detects visible sensitive inputs and explicit private text such as personal emails, phone numbers, credential-like tokens, and card-style values. Their regions are **pixelated into a fresh export image**, while any manual redactions remain permanently baked on top. The PDF does not retain an unredacted source screenshot or the automatic masking metadata.
 
 > Automatic masking covers detected page text and form regions only. Always review the guide in the editor and use **Redact sensitive area** for anything private rendered in an image, canvas, video, or a non-standard interface.
 
 ## ✅ Real validation
 
-The GIF above is based on a manual Chromium v0.2.1 validation in a clean profile. It begins at the public release, selects the published ZIP, extracts and loads the root folder in `chrome://extensions`, confirms local `gemma3:1b` availability, records a real action on the public ClickTrail repository, and opens the resulting visual guide with its exact recorded pointer. The guide then reaches the PDF-only output.
+The GIF above is based on a manual Chromium validation in a clean profile. It begins from a blank tab, loads the public ClickTrail repository, starts the local recording, moves to the release page on the same GitHub origin, selects the published `clicktrail-chrome-extension-v0.2.1.zip`, and stops recording. The recording therefore contains the actual release-download click, not a placeholder action.
 
-The validation also confirmed that detected visible private content is raster-pixelated before export; the source screenshot and automatic-mask metadata are not retained by the PDF export. You can inspect the earlier real one-page output at [Example Domain walkthrough PDF](assets/clicktrail-example-domain-real-guide.pdf). The automated suite contains **7 Vitest tests** covering guide safety, redactions, sensitive-content handling, and the local-Ollama fallback. Full technical notes are available in [TESTING.md](TESTING.md).
+The validation also confirmed that detected visible private content is raster-pixelated before export; the source screenshot and automatic-mask metadata are not retained by the PDF export. Inspect the resulting one-page guide at [Release download walkthrough PDF](assets/clicktrail-v021-release-download-guide.pdf). The automated suite contains **7 Vitest tests** covering guide safety, redactions, sensitive-content handling, and the local-Ollama fallback. Full technical notes are available in [TESTING.md](TESTING.md).
 
 ## ⚠️ Current limitations
 

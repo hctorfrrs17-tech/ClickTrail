@@ -125,14 +125,27 @@ chrome.runtime.onMessage.addListener((message: RuntimeMessage, sender, sendRespo
 });
 
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-  if (changeInfo.status !== "loading") return;
   const state = await readState();
   if (!state.recording || state.recordingTabId !== tabId) return;
+
   const nextUrl = safeHttpUrl(tab.url ?? "");
-  if (nextUrl && new URL(nextUrl).origin === state.recordingOrigin) return;
-  await writeState({ ...state, recording: false, recordingTabId: undefined, recordingOrigin: undefined });
-  await updateBadge(false);
-  await notifyTab(tabId, false);
+  const remainsOnRecordingOrigin = Boolean(nextUrl && new URL(nextUrl).origin === state.recordingOrigin);
+
+  if (changeInfo.status === "loading") {
+    if (remainsOnRecordingOrigin) return;
+    await writeState({ ...state, recording: false, recordingTabId: undefined, recordingOrigin: undefined });
+    await updateBadge(false);
+    await notifyTab(tabId, false);
+    return;
+  }
+
+  if (changeInfo.status !== "complete" || !remainsOnRecordingOrigin) return;
+  try {
+    await chrome.scripting.executeScript({ target: { tabId }, files: ["content.js"] });
+    await notifyTab(tabId, true);
+  } catch {
+    // A navigation can complete on a surface that no longer accepts content scripts; recording remains safely inert.
+  }
 });
 
 chrome.runtime.onInstalled.addListener(() => updateBadge(false));
