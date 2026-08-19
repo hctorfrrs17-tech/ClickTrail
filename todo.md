@@ -30,3 +30,5 @@
 - [x] Re-record the demo from a blank browser tab: start ClickTrail, navigate to the ClickTrail repository, open Releases, download the official ZIP, and stop recording.
 - [x] Export, verify, and publish the PDF generated from that exact blank-tab-to-release-download recording.
 - [x] Reinject the recorder after an allowed same-origin navigation so the release ZIP download becomes a recorded visual step without weakening origin-lock protection.
+- [x] Record and export a complete multi-step PDF guide: open GitHub, open the ClickTrail repository, open Releases, and download the official ZIP.
+- [x] Document and apply a step-by-step review standard for future project demonstrations before publishing their assets.

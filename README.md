@@ -81,7 +81,7 @@ Recording is restricted to the origin where it started. ClickTrail safely reinst
 
 The GIF above is based on a manual Chromium validation in a clean profile. It begins from a blank tab, loads the public ClickTrail repository, starts the local recording, moves to the release page on the same GitHub origin, selects the published `clicktrail-chrome-extension-v0.2.1.zip`, and stops recording. The recording therefore contains the actual release-download click, not a placeholder action.
 
-The validation also confirmed that detected visible private content is raster-pixelated before export; the source screenshot and automatic-mask metadata are not retained by the PDF export. Inspect the resulting one-page guide at [Release download walkthrough PDF](assets/clicktrail-v021-release-download-guide.pdf). The automated suite contains **7 Vitest tests** covering guide safety, redactions, sensitive-content handling, and the local-Ollama fallback. Full technical notes are available in [TESTING.md](TESTING.md).
+The validation also confirmed that detected visible private content is raster-pixelated before export; the source screenshot and automatic-mask metadata are not retained by the PDF export. Inspect the resulting two-page [GitHub-to-release-download walkthrough PDF](assets/clicktrail-v021-complete-github-release-zip-guide.pdf): it selects the ClickTrail repository from GitHub, opens the v0.2.1 release, and selects the official ZIP. The automated suite contains **7 Vitest tests** covering guide safety, redactions, sensitive-content handling, and the local-Ollama fallback. Full technical notes are available in [TESTING.md](TESTING.md).
 
 ## ⚠️ Current limitations
 
@@ -90,6 +90,8 @@ ClickTrail works in Chrome and Chromium-based browsers such as Edge. It does not
 ## 🤝 Contributing
 
 Contributions and issue reports are welcome. Please preserve the core promise: **no cloud account, no remote AI API, no hidden tracking, and no unsafe capture of sensitive input.**
+
+Public demonstration assets must follow the repository’s [Demonstration Quality Standard](DEMO_QUALITY_STANDARD.md): validate each meaningful transition, verify every PDF page, and publish only a complete user journey rather than an isolated final action.
 
 ## 📜 License
 
