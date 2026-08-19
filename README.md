@@ -18,7 +18,7 @@ Most workflow-documentation tools put your screenshots in a workspace or cloud a
 
 There is no Clicktrail account, remote database, telemetry dashboard, or hosted workspace. A guide lives in your Chrome local storage and can be deleted with one click.
 
-## 🧭 Install from the ZIP — no server required
+## 🧭 Install from the ZIP 
 
 Clicktrail is distributed as a normal folder inside a ZIP archive. Chrome **cannot load the ZIP file itself**: first extract it, then load the extracted folder.
 
@@ -66,33 +66,7 @@ For this first release, a recording is limited to the **origin on which it start
 
 Before every HTML, print, or ZIP export, Clicktrail writes redactions directly into a new image. The original, unredacted screenshot is **not** included in any exported file. Exports also discard unsafe URLs and do not contain executable scripts.
 
-## 🧰 Build from source
 
-```bash
-pnpm install
-pnpm check
-pnpm test
-pnpm package
-```
-
-The production extension folder is created in `dist/`. The ready-to-share archive is created at:
-
-```text
-release/clicktrail-chrome-extension-v0.1.1.zip
-```
-
-Load `dist/` with **Load unpacked** while developing.
-
-## 🗂️ Project map
-
-```text
-src/
-  background.ts       # local recording state and visible-tab screenshots
-  content.ts          # click listener active only during a recording
-  popup.ts             # compact recorder interface
-  editor.ts            # guide editor, redaction, and export logic
-  shared/              # guide model, local storage, export helpers
-```
 
 ## ⚠️ Current limitations
 
