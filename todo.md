@@ -22,3 +22,7 @@
 - [ ] User will upload `assets/clicktrail-social-preview.jpg` in GitHub Settings → General → Social preview.
 - [x] Replace the AI-generated social preview with a layout composed only from real ClickTrail test captures in the extension’s visual style.
 - [x] Export the real test guide as a PDF and provide it together with the complete test GIF to the user.
+- [ ] Automatically pixelate visible passwords, personal emails, phone numbers, tokens, card data, and other explicit sensitive text in guide images before PDF export.
+- [ ] Add clear README documentation of automatic sensitive-content pixelation and include the real demonstration PDF as a repository asset.
+- [ ] Record a new end-to-end demonstration that starts at the public ClickTrail Releases page, downloads the official ZIP, installs it, and completes a visual guide.
+- [ ] Replace the README demonstration with the new release-to-guide recording and create a text-only ClickTrail social-preview image.

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createGuideHtml, createSafeExportGuide, makeGuide, makeStep, normalizeRedaction } from "../src/shared/guide";
 import { parseLocalAnalysis } from "../src/shared/ollama";
-import { isRecordableUrl, isSafeInstructionValue, isSafeScreenshot, safeHttpUrl } from "../src/shared/security";
+import { hasExplicitSensitiveText, isRecordableUrl, isSafeInstructionValue, isSafeScreenshot, safeHttpUrl } from "../src/shared/security";
 
 describe("Clicktrail guide helpers", () => {
   it("keeps redactions inside the screenshot boundary", () => {
@@ -35,6 +35,27 @@ describe("Clicktrail guide helpers", () => {
     expect(isSafeInstructionValue("user@example.com")).toBe(false);
     expect(isSafeInstructionValue("4111 1111 1111 1111")).toBe(false);
     expect(isSafeInstructionValue("Bearer local-secret")).toBe(false);
+  });
+
+  it("recognises explicit private values that must be pixelated in exported visuals", () => {
+    expect(hasExplicitSensitiveText("Email: person@example.com")).toBe(true);
+    expect(hasExplicitSensitiveText("Call +34 612 345 678")).toBe(true);
+    expect(hasExplicitSensitiveText("token=private-value-123")).toBe(true);
+    expect(hasExplicitSensitiveText("Open the public documentation")).toBe(false);
+  });
+
+  it("normalises automatic privacy masks and removes their metadata from the exported guide", async () => {
+    const guide = makeGuide("Private handoff");
+    guide.steps.push(makeStep({
+      title: "Open profile",
+      targetLabel: "Profile",
+      url: "https://example.com",
+      screenshot: undefined,
+      autoRedactions: [{ id: "auto", x: -0.1, y: 0.8, width: 1.4, height: 0.8 }]
+    }));
+    expect(guide.steps[0].autoRedactions).toEqual([{ id: "auto", x: 0, y: 0.8, width: 1, height: 0.2 }]);
+    const safeGuide = await createSafeExportGuide(guide);
+    expect(safeGuide.steps[0].autoRedactions).toEqual([]);
   });
 
   it("normalizes the local Ollama response and keeps a safe fallback", () => {

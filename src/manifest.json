@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "ClickTrail",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Turn safe browser actions into private, local-Ollama visual PDF guides.",
   "action": {
     "default_title": "ClickTrail",

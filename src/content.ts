@@ -1,4 +1,4 @@
-import { hasSensitiveInput, isSensitiveTarget, permittedInstructionText } from "./shared/security";
+import { findSensitiveRedactions, hasSensitiveInput, isSensitiveTarget, permittedInstructionText } from "./shared/security";
 
 declare global {
   interface Window {
@@ -45,7 +45,8 @@ if (!window.__clicktrailContentInstalled) {
       url: window.location.href,
       pageTitle: document.title,
       actionKind: "click",
-      ...coordinates(event)
+      ...coordinates(event),
+      autoRedactions: findSensitiveRedactions()
     });
   }, true);
 
@@ -61,7 +62,8 @@ if (!window.__clicktrailContentInstalled) {
       actionKind: "type",
       clickX: Math.min(1, Math.max(0, (rect.left + rect.width / 2) / Math.max(window.innerWidth, 1))),
       clickY: Math.min(1, Math.max(0, (rect.top + rect.height / 2) / Math.max(window.innerHeight, 1))),
-      permittedText
+      permittedText,
+      autoRedactions: findSensitiveRedactions()
     });
   }, true);
 

@@ -56,7 +56,7 @@ ClickTrail requests access only to `http://127.0.0.1:11434/*`; it has no cloud e
 2. Open ClickTrail and choose the blue **Record** button.
 3. Complete a short workflow. Each safe action becomes a local guide step.
 4. Choose **Stop and review**, then open the guide editor.
-5. Review the AI-written title, edit it if needed, and add a redaction to any visible sensitive area.
+5. Review the AI-written title, edit it if needed, and add a manual redaction to any area that should not be shared.
 6. Choose **Export PDF** and use the browser’s **Save as PDF** destination.
 
 ClickTrail intentionally has **one delivery path: PDF**. It no longer offers raw HTML or ZIP exports, preventing accidental hand-off of editable guide source data.
@@ -68,13 +68,16 @@ ClickTrail intentionally has **one delivery path: PDF**. It no longer offers raw
 | Keeps screenshots, guides, and redactions in Chrome local storage. | Upload screenshots, analytics, or workflow data to a cloud service. |
 | Sends permitted action context to the local Ollama service at `127.0.0.1`. | Send screenshot pixels or page content to Ollama or any remote API. |
 | Uses the exact recorded coordinate for the PDF arrow and marker. | Guess a pointer location from an unrelated page or silently continue on a different origin. |
-| Blocks browser pages, sign-in flows, payment, banking, wallet, and verification surfaces. | Capture password, card, OTP, token, secret, email, phone, or personal field values. |
+| Pixelates detected private text and sensitive field regions directly into the exported image. | Preserve detected passwords, emails, phone numbers, card data, OTPs, tokens, or secrets in the PDF image. |
+| Blocks browser pages, sign-in flows, payment, banking, wallet, and verification surfaces. | Capture sensitive form values or send them to Ollama. |
 
-Recording is restricted to the origin where it started. A navigation to another origin immediately ends the session and clears the **REC** badge. Before a PDF is opened, redactions are permanently baked into a fresh image; the PDF does not retain an unredacted source screenshot.
+Recording is restricted to the origin where it started. A navigation to another origin immediately ends the session and clears the **REC** badge. Before a PDF is opened, ClickTrail detects visible sensitive inputs and explicit private text such as personal emails, phone numbers, credential-like tokens, and card-style values. Their regions are **pixelated into a fresh export image**, while any manual redactions remain permanently baked on top. The PDF does not retain an unredacted source screenshot or the automatic masking metadata.
+
+> Automatic masking covers detected page text and form regions only. Always review the guide in the editor and use **Redact sensitive area** for anything private rendered in an image, canvas, video, or a non-standard interface.
 
 ## ✅ Real validation
 
-The GIF above is based on a manual Chromium test. ClickTrail was loaded from an unpacked folder in a clean profile, recorded a real click on `example.com`, generated a local guide step, displayed an exact pointer in the editor, and opened the visual document ready for **Save as PDF**. TypeScript and all five unit tests pass. Full technical notes are available in [TESTING.md](TESTING.md).
+The GIF above is based on a manual Chromium test. ClickTrail was loaded from an unpacked folder in a clean profile, recorded a real click on `example.com`, generated a local guide step, displayed an exact pointer in the editor, and opened the visual document ready for **Save as PDF**. You can inspect the resulting one-page output at [Example Domain walkthrough PDF](assets/clicktrail-example-domain-real-guide.pdf). Full technical notes are available in [TESTING.md](TESTING.md).
 
 ## ⚠️ Current limitations
 

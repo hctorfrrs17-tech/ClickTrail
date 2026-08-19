@@ -20,6 +20,16 @@ function scheduleSave() {
 
 function visualRedactions(layer: HTMLElement, step: GuideStep) {
   layer.innerHTML = "";
+  (step.autoRedactions ?? []).forEach((redaction) => {
+    const box = document.createElement("i");
+    box.className = "redaction-box redaction-box--automatic";
+    box.style.left = `${redaction.x * 100}%`;
+    box.style.top = `${redaction.y * 100}%`;
+    box.style.width = `${redaction.width * 100}%`;
+    box.style.height = `${redaction.height * 100}%`;
+    box.title = "Automatically pixelated in the PDF export";
+    layer.append(box);
+  });
   step.redactions.forEach((redaction) => {
     const box = document.createElement("i");
     box.className = "redaction-box";

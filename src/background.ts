@@ -89,7 +89,8 @@ async function handleMessage(message: RuntimeMessage, sender: chrome.runtime.Mes
       clickX: message.payload.clickX,
       clickY: message.payload.clickY,
       url: captureUrl,
-      screenshot
+      screenshot,
+      autoRedactions: message.payload.autoRedactions
     });
     const guide = { ...state.guide, steps: [...state.guide.steps, step], updatedAt: Date.now() };
     await writeState({ ...state, guide });

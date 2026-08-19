@@ -18,6 +18,7 @@ export type GuideStep = {
   screenshot?: string;
   createdAt: number;
   redactions: Redaction[];
+  autoRedactions: Redaction[];
 };
 
 export type Guide = {
@@ -44,6 +45,7 @@ export type CapturePayload = {
   clickX: number;
   clickY: number;
   permittedText?: string;
+  autoRedactions?: Redaction[];
 };
 
 export type RuntimeMessage =
