@@ -34,3 +34,5 @@
 - [x] Document and apply a step-by-step review standard for future project demonstrations before publishing their assets.
 - [x] Add a mandatory first guide step that tells the user to navigate to the public starting URL before recording detailed actions.
 - [x] Regenerate the GitHub release-download test PDF so its first step explicitly says “Go to github.com”.
+- [x] Privately test a new 4–5 step guide with the automatic destination step and deliver only its PDF to the user.
+- [x] Remove all ClickTrail branding from exported PDFs and explain unavailable screenshots as a security restriction.

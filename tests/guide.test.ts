@@ -15,6 +15,16 @@ describe("Clicktrail guide helpers", () => {
     expect(html).toContain("Client &lt;handoff&gt;");
     expect(html).toContain("Open &lt;settings&gt;");
     expect(html).not.toContain("Open <settings>");
+    expect(html).toContain("GUIDED WALKTHROUGH");
+    expect(html).not.toContain("local-first handoff");
+  });
+
+  it("uses a security explanation instead of product branding when a screenshot is unavailable", () => {
+    const guide = makeGuide("Security-safe walkthrough");
+    guide.steps.push(makeStep({ title: "Go to example.com", targetLabel: "Browser address bar", url: "https://example.com", screenshot: undefined }));
+    const html = createGuideHtml(guide);
+    expect(html).toContain("Screenshot unavailable under security terms for this page.");
+    expect(html).not.toContain("· ClickTrail");
   });
 
   it("starts each new guide with a safe, explicit navigation instruction", () => {
