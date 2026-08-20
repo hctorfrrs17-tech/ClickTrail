@@ -36,3 +36,6 @@
 - [x] Regenerate the GitHub release-download test PDF so its first step explicitly says “Go to github.com”.
 - [x] Privately test a new 4–5 step guide with the automatic destination step and deliver only its PDF to the user.
 - [x] Remove all ClickTrail branding from exported PDFs and explain unavailable screenshots as a security restriction.
+- [x] Validate the current GitHub search-to-latest-ZIP journey and export its PDF guide.
+- [x] Add the newly validated GitHub journey PDF directly below the README GIF with an explanation of the real test.
+- [x] Serialize local capture writes so rapid consecutive actions cannot overwrite earlier guide steps.

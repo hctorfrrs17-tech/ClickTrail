@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createGuideHtml, createSafeExportGuide, makeGuide, makeNavigationStep, makeStep, normalizeRedaction } from "../src/shared/guide";
 import { parseLocalAnalysis } from "../src/shared/ollama";
+import { createSerialQueue } from "../src/shared/serial";
 import { hasExplicitSensitiveText, isRecordableUrl, isSafeInstructionValue, isSafeScreenshot, safeHttpUrl } from "../src/shared/security";
 
 describe("Clicktrail guide helpers", () => {
@@ -84,5 +85,24 @@ describe("Clicktrail guide helpers", () => {
     expect(parseLocalAnalysis({ title: "Search for hello", note: "Enter hello in the search field." }, payload)).toEqual({ title: "Search for hello", note: "Enter hello in the search field." });
     expect(parseLocalAnalysis({ title: "Click", note: "User clicked a link." }, payload)).toEqual({ title: "Enter “hello”", note: "Enter the shown non-sensitive text in search field." });
     expect(parseLocalAnalysis(undefined, payload)).toEqual({ title: "Enter “hello”", note: "Enter the shown non-sensitive text in search field." });
+  });
+
+  it("serializes capture work so every recorded action can append safely", async () => {
+    const enqueue = createSerialQueue();
+    const order: string[] = [];
+    const first = enqueue(async () => {
+      order.push("first:start");
+      await new Promise((resolve) => setTimeout(resolve, 5));
+      order.push("first:end");
+      return "first";
+    });
+    const second = enqueue(async () => {
+      order.push("second:start");
+      order.push("second:end");
+      return "second";
+    });
+
+    await expect(Promise.all([first, second])).resolves.toEqual(["first", "second"]);
+    expect(order).toEqual(["first:start", "first:end", "second:start", "second:end"]);
   });
 });

@@ -1,10 +1,12 @@
 import { makeGuide, makeNavigationStep, makeStep } from "./shared/guide";
 import { analyseLocally, ensureOllamaReady } from "./shared/ollama";
+import { createSerialQueue } from "./shared/serial";
 import { cleanText, isRecordableUrl, safeHttpUrl } from "./shared/security";
 import { readState, writeState } from "./shared/storage";
 import type { RuntimeMessage } from "./shared/types";
 
 const MAX_STEPS_PER_GUIDE = 100;
+const queueCapture = createSerialQueue();
 
 async function updateBadge(recording: boolean) {
   await chrome.action.setBadgeText({ text: recording ? "REC" : "" });
@@ -122,7 +124,10 @@ async function handleMessage(message: RuntimeMessage, sender: chrome.runtime.Mes
 }
 
 chrome.runtime.onMessage.addListener((message: RuntimeMessage, sender, sendResponse) => {
-  handleMessage(message, sender).then(sendResponse).catch((error) => sendResponse({ ok: false, error: String(error) }));
+  const task = message?.type === "CAPTURE_STEP"
+    ? queueCapture(() => handleMessage(message, sender))
+    : handleMessage(message, sender);
+  task.then(sendResponse).catch((error) => sendResponse({ ok: false, error: String(error) }));
   return true;
 });
 
