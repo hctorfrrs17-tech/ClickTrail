@@ -34,7 +34,6 @@ ClickTrail is distributed as an unpacked Chrome extension. Chrome cannot load a 
 
 > **Developer mode does not require a terminal or coding.** It is simply the Chrome setting that permits installing an unpacked extension.
 
-> **Watch the verified path above.** The README demo begins on a blank browser tab, opens the public ClickTrail repository, starts the local recording, opens [Releases](../../releases/tag/v0.2.1), downloads the official v0.2.1 ZIP, and stops the recording immediately afterward.
 
 ## 🧠 Required local Ollama setup
 
