@@ -1,6 +1,6 @@
 # ClickTrail ⚡
 
-> **Record a browser action.Export a visual PDF guide.**
+> **Record a browser action. Export a visual PDF guide.**
 
 ![ClickTrail v0.2.1: public release download, Developer mode installation, local recording, visual guide editor, and PDF output](assets/clicktrail-demo.gif)
 
