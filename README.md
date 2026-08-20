@@ -5,7 +5,7 @@
 ![ClickTrail v0.2.1: public release download, Developer mode installation, local recording, visual guide editor, and PDF output](assets/clicktrail-demo.gif)
 
 
-This PDF is the guide that was done in the procese of the video above: [TEST GUIDE](assets/clicktrail-github-search-to-zip-validation-guide.pdf).
+> This PDF is the guide that was done in the procese of the video above: [TEST GUIDE](assets/clicktrail-github-search-to-zip-validation-guide.pdf).
 
 ClickTrail is an **open-source, local-first Chrome extension** for turning browser workflows into polished visual PDF guides. It records a safe browser action, asks **Ollama running on your own computer** to write a clear instruction, and places a pointer precisely where the action happened.
 
